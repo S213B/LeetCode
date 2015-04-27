@@ -1,0 +1,2 @@
+# LeetCode
+newbie coder
