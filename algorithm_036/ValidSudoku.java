@@ -1,4 +1,4 @@
-package algorithm_36;
+package algorithm_036;
 
 public class ValidSudoku {
 	

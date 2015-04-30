@@ -1,4 +1,4 @@
-package algorithm_9;
+package algorithm_009;
 
 public class PalindromeNum {
     public boolean isPalindrome(int x) {

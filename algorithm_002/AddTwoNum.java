@@ -1,4 +1,4 @@
-package algorithm_2;
+package algorithm_002;
 
 public class AddTwoNum {
 	

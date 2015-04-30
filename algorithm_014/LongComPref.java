@@ -1,4 +1,4 @@
-package algorithm_14;
+package algorithm_014;
 
 public class LongComPref {
     public String longestCommonPrefix(String[] strs) {

@@ -1,4 +1,4 @@
-package algorithm_5;
+package algorithm_005;
 import java.util.ArrayList;
 
 public class Manacher {

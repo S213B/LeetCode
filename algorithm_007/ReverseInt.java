@@ -1,4 +1,4 @@
-package algorithm_7;
+package algorithm_007;
 
 public class ReverseInt {
     public int reverse(int x) {

@@ -1,6 +1,4 @@
-package algorithm_10;
-
-import java.util.Stack;
+package algorithm_010;
 
 public class RegularExpressionMatching {
     public boolean isMatch(String s, String p) {

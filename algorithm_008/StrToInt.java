@@ -1,4 +1,4 @@
-package algorithm_8;
+package algorithm_008;
 
 public class StrToInt {
     public int atoi(String str) {

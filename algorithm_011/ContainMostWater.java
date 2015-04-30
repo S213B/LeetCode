@@ -1,4 +1,4 @@
-package algorithm_11;
+package algorithm_011;
 
 public class ContainMostWater {
 	public int maxArea(int[] height) {

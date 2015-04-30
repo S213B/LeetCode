@@ -1,4 +1,4 @@
-package algorithm_3;
+package algorithm_003;
 
 public class LongSubstrWORepeatChar {
     public int lengthOfLongestSubstring(String s) {

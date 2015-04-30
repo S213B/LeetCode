@@ -1,4 +1,4 @@
-package algorithm_37;
+package algorithm_037;
 
 public class SudokuSolver {
 	

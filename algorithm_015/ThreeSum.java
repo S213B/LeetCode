@@ -1,4 +1,4 @@
-package algorithm_15;
+package algorithm_015;
 
 import java.util.*;
 

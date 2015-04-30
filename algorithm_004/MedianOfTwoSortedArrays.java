@@ -1,4 +1,4 @@
-package algorithm_4;
+package algorithm_004;
 
 public class MedianOfTwoSortedArrays {
     public double findMedianSortedArrays(int A[], int B[]) {
