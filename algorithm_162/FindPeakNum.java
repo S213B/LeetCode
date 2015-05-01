@@ -1,33 +1,26 @@
 package algorithm_162;
 
-import java.util.List;
-
 public class FindPeakNum {
 	
-    public int findPeakElement(List<Integer> nums) {
-        nums.add(0, Integer.MIN_VALUE);
-        nums.add(Integer.MIN_VALUE);
-        if(nums.get(1) >= nums.get(2)) {
+    public int findPeakElement(int nums[]) {
+        if(nums.length < 2 || nums[0] > nums[1]) {
             return 0;
         }
-        if(nums.get(nums.size()-2) >= nums.get(nums.size()-3)) {
-            return nums.size()-3;
-        }
-        int a = 2, b = nums.size()-5;
-        while(b != 0) {
-            if(nums.get(a+b-1) < nums.get(a+b) && nums.get(a+b) < nums.get(a+b+1)) {
-                a += b;
+        int a = 0, b = nums.length-1, mid;
+        while(a+1 != b) {
+            mid = b + ((a-b)>>1);
+            if(nums[mid-1] < nums[mid] && nums[mid] < nums[mid+1]) {
+                a = mid;
             } else {
-                b >>= 1;
+                b = mid;
             }
         }
         
-        return a;
+        return b;
     }
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }
