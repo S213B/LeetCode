@@ -7,146 +7,92 @@
 #include <iostream>
 using namespace std;
 
-#define TEST6
+#define TEST7
 
 class Solution {
 public:
 
-    struct node {
-        string str;
-        vector<int> father;
-        vector<int> child;
-    };
-
-    int get_dis(const string &from, const string &to) {
-        if (from.size() != to.size())
-            return -1;
-        int dis = 0;
-        for (int i = 0; i < from.size(); ++i) {
-            if (from[i] == to[i])
-                continue;
-            ++dis;
-        }
-        return dis;
-    }
-
-    bool can_trans(const string &a, const string &b) {
-        return (get_dis(a, b) == 1);
-    }
-
-    void add_res(vector<vector<string>> &rc, deque<string> &r, const struct node &node, vector<struct node> &tree) {
-        if (node.father.empty()) {
-            r.push_front(node.str);
-            rc.emplace_back(r.cbegin(), r.cend());
-            return;
-        }
-
-        for (const auto &idx : node.father) {
-            const struct node &father = tree[idx];
-            deque<string> rr(r);
-            rr.push_front(node.str);
-            add_res(rc, rr, father, tree);
-        }
-    }
-
-    void conv_child2father(struct node &father, int f_idx, vector<struct node> &tree) {
-        if (father.child.empty())
-            return;
-        for (auto &idx : father.child) {
-            //cout << father.str << " f=>c " << tree[idx].str << endl;
-            tree[idx].father.push_back(f_idx);
-            conv_child2father(tree[idx], idx, tree);
-        }
-        father.child.clear();
-    }
-
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
-        unordered_set<string> word;
-        unordered_map<string, int> next_lvl;
+        unordered_set<string> word(wordList.begin(), wordList.end());
+        unordered_map<string, vector<string>> path;
         vector<vector<string>> rc;
-        vector<int> q_top, q_bot, *q;
-        vector<struct node> tree;
+        unordered_set<string> s_top, s_bot, next_layer;
         bool is_end = false;
-        bool has_end = false;
 
-        word.reserve(wordList.size());
-        for (const auto &s : wordList) {
-            if (s == endWord)
-                has_end = true;
-            else
-                word.insert(s);
-        }
-        if (!has_end)
+        if (!word.count(endWord))
             return rc;
 
-        struct node top, bot;
-        top.str = beginWord;
-        bot.str = endWord;
-        tree.push_back(top);
-        tree.push_back(bot);
-        q_top.push_back(0);
-        q_bot.push_back(1);
+        word.erase(beginWord);
+        word.erase(endWord);
 
-        while (!q_top.empty() && !q_bot.empty()) {
-            for (const auto &t : q_top) {
-                for (const auto &b : q_bot) {
-                    struct node &tn = tree[t];
-                    struct node &bn = tree[b];
-                    if (can_trans(tn.str, bn.str)) {
-                        //cout << tn.str << "=>" << bn.str << endl;
-                        bn.father.push_back(t);
-                        conv_child2father(bn, b, tree);
-                        is_end = true;
+        s_top.insert(beginWord);
+        s_bot.insert(endWord);
+
+        while (!s_top.empty() && !s_bot.empty()) {
+            unordered_set<string> *s1, *s2;
+            bool is_top2bot = true;
+
+            if (s_top.size() < s_bot.size()) {
+                s1 = &s_top;
+                s2 = &s_bot;
+                is_top2bot = true;
+            } else {
+                s1 = &s_bot;
+                s2 = &s_top;
+                is_top2bot = false;
+            }
+
+            for (auto s = s1->begin(); s != s1->end(); s++) {
+                string str = *s;
+                for (char &c : str) {
+                    const char orig = c;
+                    for (c = 'a'; c < 'z'; c++) {
+                        if (s2->count(str)) {
+                            if (is_top2bot)
+                                path[*s].push_back(str);
+                            else
+                                path[str].push_back(*s);
+                            is_end = true;
+                        } else if (!is_end && word.count(str)) {
+                            if (is_top2bot)
+                                path[*s].push_back(str);
+                            else
+                                path[str].push_back(*s);
+                            next_layer.insert(str);
+                        }
                     }
+                    c = orig;
                 }
             }
 
-            if (is_end) {
-                deque<string> t;
-                add_res(rc, t, tree[1], tree);
-                break;
+            if (is_end) break;
+
+            for (const auto &s : next_layer) {
+                word.erase(s);
             }
 
-            q = q_top.size() > q_bot.size() ? &q_bot : &q_top;
-            bool top2bot = q_top.size() > q_bot.size() ? false : true;  // 0:top->bot, 1:bot->top
+            s1->swap(next_layer);
+            next_layer.clear();
+        }
 
-            while (!q->empty()) {
-                const int idx = q->back();
-                const string str = tree[idx].str;
-                q->pop_back();
-
-                for (const auto &s : word) {
-                    if (!can_trans(str, s))
-                        continue;
-                    if (next_lvl.find(s) == next_lvl.end()) {
-                        struct node node;
-                        node.str = s;
-                        if (top2bot)
-                            node.father.push_back(idx);
-                        else
-                            node.child.push_back(idx);
-                            //tree[idx].father.push_back(tree.size());
-                        next_lvl[s] = tree.size();
-                        tree.push_back(node);
-                    } else {
-                        int n_idx = next_lvl[s];
-                        if (top2bot)
-                            tree[n_idx].father.push_back(idx);
-                        else
-                            tree[n_idx].child.push_back(idx);
-                            //tree[idx].father.push_back(n_idx);
-                    }
-                }
-            }
-
-            for (const auto &e : next_lvl) {
-                word.erase(e.first);
-                q->push_back(e.second);
-            }
-            next_lvl.clear();
+        if (is_end) {
+            vector<string> t = {beginWord};
+            gen_res(rc, path, path[beginWord], t, endWord);
         }
 
         return rc;
+    }
+
+    void gen_res(vector<vector<string>> &rc, unordered_map<string, vector<string>> &path, vector<string> &next, vector<string> p, string &end) {
+        for (const auto &n : next) {
+            p.push_back(n);
+            if (n == end) {
+                rc.push_back(p);
+            } else if (path.count(n)) {
+                gen_res(rc, path, path[n], p, end);
+            }
+            p.pop_back();
+        }
     }
 };
 
@@ -177,6 +123,10 @@ int main()
     string b("hot");
     string e("dog");
     vector<string> w = {"hot","dog"};
+#else
+    string b("aaa");
+    string e("ddd");
+    vector<string> w = {"bbb","add"};
 #endif
         
     vector<vector<string>> r = s.findLadders(b, e, w);
