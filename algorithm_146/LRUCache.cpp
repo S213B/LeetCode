@@ -2,7 +2,7 @@ class LRUCache {
 public:
     int cap;
     unordered_map<int, array<int, 2>> map; // 0:val, 1:ref
-    queue<array<int, 2>, list<array<int, 2>>> q; // 0:key, 1:ref
+    queue<array<int, 2>, deque<array<int, 2>>> q; // 0:key, 1:ref
     
     LRUCache(int capacity) {
         cap = capacity;
