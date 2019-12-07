@@ -36,8 +36,39 @@ private:
 public:
     vector<string> go(int k) {
         vector<string> ans;
+        unordered_set<string> set;
+        string ori;
 
+#if 0
         helper(ans, k);
+#else
+        for (int i = 0; i < k; i++) {
+            ori.push_back('(');
+            ori.push_back(')');
+        }
+        ans.push_back(ori);
+
+        for (int i = 1; i < ori.size(); i++) {
+            int ans_sz = ans.size();
+            for (int s_idx = 0; s_idx < ans.size(); s_idx++) {
+                string s = ans[s_idx];
+                if (s[i] == '(')
+                    continue;
+                for (int j = i + 1; j < s.size(); j++) {
+                    if (s[j] == ')')
+                        continue;
+                    string ss(s.begin(), s.end());
+                    char t = ss[i];
+                    ss[i] = ss[j];
+                    ss[j] = t;
+                    if (set.find(ss) == set.end()) {
+                        set.insert(ss);
+                        ans.push_back(ss);
+                    }
+                }
+            }
+        }
+#endif
 
         return ans;
     }
@@ -65,7 +96,7 @@ int main(int argc, char *argv[]) {
     Solution solution;
     vector<string> v;
 
-    for (int i = 0; i < atoi(argv[1]); i++) {
+    for (int i = 9; i < atoi(argv[1]); i++) {
         v = solution.go(i);
 
         for (auto &s : v) {
