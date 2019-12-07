@@ -7,15 +7,15 @@ using namespace std;
 
 class Solution {
 private:
-    void helper(vector<string> &v, int k) {
+    void helper(vector<string> &v, int n) {
         unordered_set<string> set;
 
-        if (!k) {
+        if (!n) {
             v.push_back("");
             return;
         }
 
-        helper(v, k-1);
+        helper(v, n-1);
 
         for (auto &s : v) {
             for (int i = 0; i <= s.size(); i++) {
@@ -34,18 +34,16 @@ private:
     }
 
 public:
-    vector<string> go(int k) {
+    vector<string> go(int n) {
         vector<string> ans;
         unordered_set<string> set;
         string ori;
 
 #if 0
-        helper(ans, k);
+        helper(ans, n);
 #else
-        for (int i = 0; i < k; i++) {
-            ori.push_back('(');
-            ori.push_back(')');
-        }
+        for (int i = 0; i < n; i++)
+            ori.append("()");
         ans.push_back(ori);
 
         for (int i = 1; i < ori.size(); i++) {
