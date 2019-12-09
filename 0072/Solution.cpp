@@ -9,45 +9,34 @@ using namespace std;
 class Solution {
 public:
     int minDistance(string word1, string word2) {
-        vector<vector<int>> dp;
+        vector<int> dp(word2.size(), 0);
+        int last;
 
         if (!word1.size() || !word2.size())
             return word1.size() + word2.size();
 
-        for (int i = 0; i < word1.size(); i++) {
-            vector<int> v(word2.size(), 0);
-            dp.push_back(v);
-        }
-
-        dp[0][0] = (word1[0] == word2[0] ? 0 : 1);
-        for (int i = 1; i < word1.size(); i++)
-            dp[i][0] = (word1[i] == word2[0] ? i : dp[i-1][0]+1);
+        dp[0] = (word1[0] == word2[0] ? 0 : 1);
         for (int i = 1; i < word2.size(); i++)
-            dp[0][i] = (word1[0] == word2[i] ? i : dp[0][i-1]+1);
+            dp[i] = (word1[0] == word2[i] ? i : dp[i-1]+1);
 
         for (int i = 1; i < word1.size(); i++) {
+            last = dp[0];
+            dp[0] = (word1[i] == word2[0]) ? i : last+1;
             for (int j = 1; j < word2.size(); j++) {
+                int tmp_last = dp[j];
                 if (word1[i] == word2[j]) {
-                    dp[i][j] = dp[i-1][j-1];
+                    dp[j] = last;
                 } else {
-                    int insert = dp[i][j-1] + 1;
-                    int remove = dp[i-1][j] + 1;
-                    int replace = dp[i-1][j-1] + 1;
-                    dp[i][j] = min(insert, min(remove, replace));
+                    int insert = dp[j-1] + 1;
+                    int remove = dp[j] + 1;
+                    int replace = last + 1;
+                    dp[j] = min(insert, min(remove, replace));
                 }
+                last = tmp_last;
             }
         }
 
-#if 0
-        for (int i = 0; i < word1.size(); i++) {
-            for (int j = 0; j < word2.size(); j++) {
-                cout << dp[i][j];
-            }
-            cout << endl;
-        }
-#endif
-
-        return dp[word1.size()-1][word2.size()-1];
+        return dp[word2.size()-1];
     }
 };
 
