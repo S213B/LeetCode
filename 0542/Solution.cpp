@@ -3,38 +3,55 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <queue>
 
 using namespace std;
 
 class Solution {
-private:
-    void dfs(vector<vector<int>>& dis, int i, int j, int cur) {
-        if (i < 0 || j < 0 || i >= dis.size() || j >= dis[i].size() || (cur && cur >= dis[i][j]))
-            return;
-        dis[i][j] = cur;
-        dfs(dis, i+1, j, cur+1);
-        dfs(dis, i, j+1, cur+1);
-        dfs(dis, i-1, j, cur+1);
-        dfs(dis, i, j-1, cur+1);
-    }
-
 public:
     vector<vector<int>> updateMatrix(vector<vector<int>>& matrix) {
         vector<vector<int>> ans;
-        int init_val = matrix.size() * matrix[0].size();
+        queue<pair<int, int>> queue;
 
         for (int i = 0; i < matrix.size(); i ++) {
             vector<int> row;
             for (int j = 0; j < matrix[i].size(); j ++) {
-                row.push_back(matrix[i][j] ? init_val : 0);
+                if (matrix[i][j]) {
+                    int val = -1;
+                    if ((i && !matrix[i-1][j]) ||
+                        (j && !matrix[i][j-1]) ||
+                        (i < matrix.size()-1 && !matrix[i+1][j]) ||
+                        (j < matrix[i].size()-1 && !matrix[i][j+1]))
+                        val = 1;
+                    row.push_back(val);
+                    if (val == 1)
+                        queue.push(make_pair(i, j));
+                } else {
+                    row.push_back(0);
+                }
             }
             ans.push_back(row);
         }
 
-        for (int i = 0; i < matrix.size(); i ++) {
-            for (int j = 0; j < matrix[i].size(); j ++) {
-                if (!matrix[i][j])
-                    dfs(ans, i, j, 0);
+        while (queue.size()) {
+            int i = queue.front().first;
+            int j = queue.front().second;
+            queue.pop();
+            if (i && ans[i-1][j] == -1) {
+                ans[i-1][j] = ans[i][j] + 1;
+                queue.push(make_pair(i-1, j));
+            }
+            if (j && ans[i][j-1] == -1) {
+                ans[i][j-1] = ans[i][j] + 1;
+                queue.push(make_pair(i, j-1));
+            }
+            if (i < matrix.size()-1 && ans[i+1][j] == -1) {
+                ans[i+1][j] = ans[i][j] + 1;
+                queue.push(make_pair(i+1, j));
+            }
+            if (j < matrix[i].size()-1 && ans[i][j+1] == -1) {
+                ans[i][j+1] = ans[i][j] + 1;
+                queue.push(make_pair(i, j+1));
             }
         }
 
@@ -57,6 +74,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    cout << endl;
     for (auto &r : grid) {
         for (auto nnn : r) {
             cout << nnn << " ";
@@ -64,7 +82,7 @@ int main(int argc, char *argv[]) {
         cout << endl;
     }
 
-    solution.updateMatrix(grid);
+    grid = solution.updateMatrix(grid);
 
     cout << endl;
     for (auto &r : grid) {
