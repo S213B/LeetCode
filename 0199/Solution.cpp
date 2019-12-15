@@ -55,20 +55,18 @@ int main(int argc, char *argv[]) {
     TreeNode *root = nullptr;
     vector<int> ans;
 
-    for (int i = 1; i < argc; i += 2) {
-        TreeNode *prev = nullptr, *n;
+    root = new TreeNode(atoi(argv[1]));
+    queue.push_back(root);
+    for (int i = 2; i < argc; i += 2) {
+        TreeNode *prev = queue.front(), *n;
         int val;
-        if (queue.size()) {
-            prev = queue.front();
-            queue.pop_front();
-        }
+
+        queue.pop_front();
+
         if (strcmp(argv[i], "null")) {
             val = atoi(argv[i]);
             n = new TreeNode(val);
-            if (!root)
-                root = n;
-            if (prev)
-                prev->left = n;
+            prev->left = n;
             queue.push_back(n);
         }
 
@@ -78,8 +76,7 @@ int main(int argc, char *argv[]) {
         if (strcmp(argv[i+1], "null")) {
             val = atoi(argv[i+1]);
             n = new TreeNode(val);
-            if (prev)
-                prev->right = n;
+            prev->right = n;
             queue.push_back(n);
         }
     }
