@@ -6,6 +6,7 @@
 
 using namespace std;
 
+#if 0
 class Solution {
 private:
     class node {
@@ -136,6 +137,98 @@ public:
         return match_pattern(root, s);
     }
 };
+
+#else
+
+class Solution {
+private:
+    vector<string> split_pat(string &p) {
+        vector<string> pat;
+        int i = 0, j = 0;
+        while (i < p.size()) {
+            if (p[i] == '*') {
+                pat.push_back(p.substr(j, i - j));
+                j = i + 1;
+            }
+            i ++;
+        }
+        pat.push_back(p.substr(j, i - j));
+        return pat;
+    }
+
+    bool ch_match(char s, char p) {
+        return p == '?' || s == p;
+    }
+
+    bool match_begin(string &s, string &p) {
+        int si = 0;
+        for (int i = 0; i < p.size(); i ++) {
+            if (si < s.size() && ch_match(s[si], p[i]))
+                si ++;
+            else
+                return false;
+        }
+        return true;
+    }
+
+    bool match_mid(string &s, vector<string> &p) {
+        int si = 0;
+        for (int i = 0; i < p.size(); i ++) {
+            if (!p[i].size())
+                continue;
+            int match = 0;
+            while (si < s.size()) {
+                int j = 0, ori_si = si;
+                while (j < p[i].size() && si < s.size() && ch_match(s[si], p[i][j])) {
+                    j ++;
+                    si ++;
+                }
+                if (j == p[i].size()) {
+                    match = 1;
+                    break;
+                }
+                si = ori_si + 1;
+            }
+            if (!match)
+                return false;
+        }
+        return true;
+    }
+
+public:
+    bool isMatch(string s, string p) {
+        vector<string> pat;
+
+        if (!p.size()) {
+            if (s.size())
+                return false;
+            else
+                return true;
+        }
+
+        pat = split_pat(p);
+
+        if (pat.size() == 1 && s.size() != pat[0].size())
+            return false;
+        if (!match_begin(s, pat[0]))
+            return false;
+        s = s.substr(pat[0].size());
+        pat.erase(pat.begin());
+
+        if (pat.size()) {
+            reverse(s.begin(), s.end());
+            reverse(pat.back().begin(), pat.back().end());
+            if (!match_begin(s, pat.back()))
+                return false;
+            s = s.substr(pat.back().size());
+            pat.pop_back();
+            reverse(s.begin(), s.end());
+        }
+
+        return match_mid(s, pat);
+    }
+};
+#endif
 
 int main(int argc, char *argv[]) {
     Solution solution;
