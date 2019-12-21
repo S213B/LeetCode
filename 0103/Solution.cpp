@@ -21,6 +21,9 @@ public:
         queue<TreeNode *> q;
         bool l2r = true;
 
+        if (!root)
+            return ans;
+
         q.push(root);
         while (q.size()) {
             int q_sz = q.size();
