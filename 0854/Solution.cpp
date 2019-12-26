@@ -31,23 +31,6 @@ private:
         }
     }
 
-    void dfs(uint32_t cur_cover, int start) {
-        int end = loops.size();
-        for (int i = start; i < end; i ++) {
-            uint32_t cover = loops[i];
-            if (cur_cover & cover)
-                continue;
-            uint32_t new_cover = cur_cover | cover;
-            int new_loop_cnt = visited[cur_cover] + visited[cover];
-            if (!visited.count(new_cover))
-                loops.push_back(new_cover);
-            if (visited[new_cover] >= new_loop_cnt)
-                continue;
-            visited[new_cover] = new_loop_cnt;
-            dfs(new_cover, end);
-        }
-    }
-
 public:
     int kSimilarity(string A, string B) {
         int ans = 0;
@@ -72,7 +55,20 @@ public:
 
         int loop_sz = loops.size();
         for (int i = 0; i < loop_sz; i ++) {
-            dfs(loops[i], 0);
+            uint32_t curr = loops[i];
+            int j_end = loops.size();
+            for (int j = 0; j < j_end; j++) {
+                uint32_t peer = loops[j];
+                if (curr & peer)
+                    continue;
+                uint32_t next = curr | peer;
+                int loop_cnt = visited[curr] + visited[peer];
+                if (!visited.count(next))
+                    loops.push_back(next);
+                if (visited[next] >= loop_cnt)
+                    continue;
+                visited[next] = loop_cnt;
+            }
         }
 
         return ans - visited[end_mask];
