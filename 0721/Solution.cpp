@@ -60,7 +60,9 @@ public:
                 string &email = account[i];
                 if (email2account.count(email)) {
                     my_account *peer = email2account[email];
-                    peer->get_ancestor()->set_ancestor(person);
+                    my_account *ancestor = peer->get_ancestor();
+                    if (ancestor != person)
+                        ancestor->set_ancestor(person);
                 } else {
                     email2account[email] = person;
                 }
