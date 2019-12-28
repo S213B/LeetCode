@@ -21,14 +21,14 @@ public:
         if (preorder.size() == 0)
             return nullptr;
 
-        int mid = inorder[0], idx = 0;
-        while (preorder[idx] != mid) idx ++;
+        int mid = preorder[0], idx = 0;
+        while (inorder[idx] != mid) idx ++;
 
-        vector<int> pre_left(preorder.begin(), preorder.begin() + idx);
-        vector<int> pre_right(preorder.begin() + idx + 1, preorder.end());
+        vector<int> pre_left(preorder.begin() + 1, preorder.begin() + 1 + idx);
+        vector<int> pre_right(preorder.begin() + 1 + idx, preorder.end());
 
-        vector<int> in_left(inorder.begin() + 1, inorder.begin() + 1 + idx);
-        vector<int> in_right(inorder.begin() + 1 + idx, inorder.end());
+        vector<int> in_left(inorder.begin(), inorder.begin() + idx);
+        vector<int> in_right(inorder.begin() + idx + 1, inorder.end());
 
         TreeNode *n = new TreeNode(mid);
         n->left = buildTree(pre_left, in_left);
@@ -42,8 +42,8 @@ static void
 go_preorder(TreeNode *n, vector<int> &v) {
     if (!n)
         return;
-    go_preorder(n->left, v);
     v.push_back(n->val);
+    go_preorder(n->left, v);
     go_preorder(n->right, v);
 }
 
@@ -51,8 +51,8 @@ static void
 go_inorder(TreeNode *n, vector<int> &v) {
     if (!n)
         return;
-    v.push_back(n->val);
     go_inorder(n->left, v);
+    v.push_back(n->val);
     go_inorder(n->right, v);
 }
 
