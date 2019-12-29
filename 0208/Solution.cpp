@@ -83,5 +83,19 @@ public:
 
 int main(int argc, char *argv[]) {
     Trie trie;
+    string cmd, str;
+
+    while (cin >> cmd) {
+        bool r = true;
+        cin >> str;
+        if (!cmd.compare("insert"))
+            trie.insert(str);
+        else if (!cmd.compare("search"))
+            r = trie.search(str);
+        else if (!cmd.compare("start"))
+            r = trie.startsWith(str);
+        cout << r << endl;
+    }
+
     return 0;
 }
