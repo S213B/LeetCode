@@ -8,40 +8,63 @@ using namespace std;
 
 class Solution {
 private:
-    bool find(vector<vector<char>> &board, int i, int j, string &word, int k) {
-        if (k >= word.size())
-            return true;
+    class node {
+    public:
+        node *next[26];
+        string word;
+        bool end;
+        node () : end(false) {
+            memset(next, 0, sizeof(next));
+        }
+        node *add(char c) {
+            int i = c - 'a';
+            if (!next[i])
+                next[i] = new node();
+            return next[i];
+        }
+        node *go(char c) {
+            int i = c - 'a';
+            return next[i];
+        }
+        void set_end(string &_word) {
+            word = _word;
+            end = true;
+        }
+    };
+
+    void _findWords(vector<vector<char>> &board, int i, int j, node *n, vector<string> &ans) {
         if (i < 0 || j < 0 || i >= board.size() || j >= board[i].size())
-            return false;
-        if (board[i][j] != word[k])
-            return false;
-        bool match = false;
+            return;
+        char c = board[i][j];
+        if (!c || !(n = n->go(c)))
+            return;
+        if (n->end) {
+            ans.push_back(n->word);
+            n->end = false;
+        }
         board[i][j] = 0;
-        match = find(board, i+1, j, word, k+1) |
-                find(board, i-1, j, word, k+1) |
-                find(board, i, j+1, word, k+1) |
-                find(board, i, j-1, word, k+1);
-        board[i][j] = word[k];
-        return match;
+        _findWords(board, i+1, j, n, ans);
+        _findWords(board, i-1, j, n, ans);
+        _findWords(board, i, j+1, n, ans);
+        _findWords(board, i, j-1, n, ans);
+        board[i][j] = c;
     }
 
 public:
     vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
         vector<string> ans;
+        node *root = new node();
 
         for (auto &word : words) {
-            bool match = false;
-            for (int i = 0; i < board.size() && !match; i ++) {
-                for (int j = 0; j < board[i].size(); j ++) {
-                    if (find(board, i, j, word, 0)) {
-                        match = true;
-                        break;
-                    }
-                }
-            }
-            if (match)
-                ans.push_back(word);
+            node *n = root;
+            for (auto w : word)
+                n = n->add(w);
+            n->set_end(word);
         }
+
+        for (int i = 0; i < board.size(); i ++)
+            for (int j = 0; j < board[i].size(); j ++)
+                _findWords(board, i, j, root, ans);
 
         return ans;
     }
