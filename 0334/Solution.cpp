@@ -9,6 +9,20 @@ using namespace std;
 class Solution {
 public:
     bool increasingTriplet(vector<int>& nums) {
+#if 1
+        int small = INT_MAX, big = INT_MAX;
+
+        for (auto n : nums) {
+            if (n <= small)
+                small = n;
+            else if (n <= big)
+                big = n;
+            else
+                return true;
+        }
+
+        return false;
+#else
         int stack[3], stack_sz = 0;
 
         for (auto n : nums) {
@@ -45,6 +59,7 @@ public:
         }
 
         return false;
+#endif
     }
 };
 
