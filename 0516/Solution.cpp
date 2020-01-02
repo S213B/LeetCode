@@ -10,22 +10,26 @@ class Solution {
 public:
     int longestPalindromeSubseq(string s) {
         vector<vector<int>> match(s.size(), vector<int>(s.size(), 0));
+        int n = s.size();
 
-        if (s.size() < 2)
+        if (n < 2)
             return s.size();
 
-        for (int i = 0; i < s.size(); i ++)
+        for (int i = 0; i < n; i ++)
             match[i][i] = 1;
 
-        for (int len = 2; len <= s.size(); len ++) {
-            for (int i = 0; i + len - 1 < s.size(); i ++) {
-                int t = max(match[i][i+len-2], match[i+1][i+len-1]);
-                match[i][i+len-1] = match[i+1][i+len-2] + (s[i] == s[i+len-1] ? 2 : 0);
-                match[i][i+len-1] = max(match[i][i+len-1], t);
+        for (int len = 2; len <= n; len ++) {
+            for (int i = 0; i + len - 1 < n; i ++) {
+                int end = i + len - 1;
+                if (s[i] == s[end]) {
+                    match[i][end] = match[i+1][end-1] + 2;
+                } else {
+                    match[i][end] = max(match[i][end-1], match[i+1][end]);
+                }
             }
         }
 
-        return match[0][s.size()-1];
+        return match[0][n-1];
     }
 };
 
