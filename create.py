@@ -8,6 +8,10 @@ Solution_src = """#include <iostream>
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
