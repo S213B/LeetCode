@@ -14,19 +14,15 @@ class Solution {
 public:
     vector<int> corpFlightBookings(vector<vector<int>>& bookings, int n) {
         vector<int> ans(n);
-        vector<int> bs(n), be(n);
-        int b_sz = bookings.size();
 
-        for (int i = 0; i < b_sz; i ++) {
-            bs[bookings[i][0]-1] += bookings[i][2];
-            be[bookings[i][1]-1] += bookings[i][2];
+        for (auto &b : bookings) {
+            ans[b[0]-1] += b[2];
+            if (b[1] < n)
+                ans[b[1]] -= b[2];
         }
 
-        for (int i = 0, sum = 0; i < n; i ++) {
-            sum += bs[i];
-            ans[i] = sum;
-            sum -= be[i];
-        }
+        for (int i = 1; i < n; i ++)
+            ans[i] += ans[i-1];
 
         return ans;
     }
