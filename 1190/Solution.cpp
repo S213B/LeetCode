@@ -13,6 +13,7 @@ using namespace std;
 class Solution {
 public:
     string reverseParentheses(string s) {
+        vector<int> peer(s.size(), -1);
         stack<int> stk;
         string ans;
 
@@ -20,14 +21,19 @@ public:
             if (s[i] == '(') {
                 stk.push(i);
             } else if (s[i] == ')') {
-                reverse(s.begin() + stk.top(), s.begin() + i + 1);
+                peer[stk.top()] = i;
+                peer[i] = stk.top();
                 stk.pop();
             }
         }
 
-        for (auto c : s) {
-            if (c != '(' && c != ')')
-                ans.push_back(c);
+        for (int i = 0, dir = 1; i < s.size(); i += dir) {
+            if (peer[i] == -1) {
+                ans.push_back(s[i]);
+            } else {
+                i = peer[i];
+                dir = -dir;
+            }
         }
 
         return ans;
