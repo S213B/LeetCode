@@ -13,29 +13,19 @@ using namespace std;
 class Solution {
 public:
     int scoreOfParentheses(string S) {
-        stack<int> stk;
+        int ans = 0, level = 0;
+        int n = S.size();
 
-        for (auto c : S) {
-            if (c == '(') {
-                stk.push(-1);
-            } else {
-                int v = 1;
-                if (stk.top() == -1) {
-                    stk.pop();
-                } else {
-                    v = stk.top() * 2;
-                    stk.pop();
-                    stk.pop();
-                }
-                if (stk.size() && stk.top() > 0) {
-                    v += stk.top();
-                    stk.pop();
-                }
-                stk.push(v);
-            }
+        for (int i = 0; i < n; i ++) {
+            if (S[i] == '(')
+                level ++;
+            else
+                level --;
+            if (S[i] == ')' && S[i-1] == '(')
+                ans += 1 << level;
         }
 
-        return stk.top();
+        return ans;
     }
 };
 
