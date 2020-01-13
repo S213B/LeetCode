@@ -11,44 +11,26 @@
 using namespace std;
 
 class Solution {
-private:
-    int helper(string &s, char ch_open) {
-        int open = 0, n = s.size();
-        queue<int> star;
+public:
+    bool checkValidString(string s) {
+        int lower = 0, higher = 0;
 
-        for (int i = 0; i < n; i ++) {
-            int c = s[i];
-            if (c == '*') {
-                star.push(i);
-            } else if (c == ch_open) {
-                open ++;
+        for (auto c : s) {
+            if (c == '(') {
+                lower ++;
+                higher ++;
+            } else if (c == ')') {
+                if (!higher)
+                    return false;
+                lower = max(0, lower - 1);
+                higher --;
             } else {
-                open --;
-                if (open < 0) {
-                    if (!star.size())
-                        return -1;
-                    s[star.front()] = ch_open;
-                    star.pop();
-                    open ++;
-                }
+                lower = max(0, lower - 1);
+                higher ++;
             }
         }
 
-        return open;
-    }
-
-public:
-    bool checkValidString(string s) {
-        int open_left;
-
-        open_left = helper(s, '(');
-        if (open_left <= 0)
-            return !open_left;
-
-        reverse(s.begin(), s.end());
-
-        open_left = helper(s, ')');
-        return open_left >= 0;
+        return lower == 0;
     }
 };
 
