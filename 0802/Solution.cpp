@@ -12,22 +12,18 @@ using namespace std;
 
 class Solution {
 private:
-    bool dfs(int cur, vector<vector<int>> &graph, vector<bool> &visited, vector<int> safe) {
+    bool dfs(int cur, vector<vector<int>> &graph, vector<int> &safe) {
         if (!graph[cur].size())
             return true;
         if (safe[cur] != -1)
             return safe[cur] != 0;
-        if (visited[cur])
-            return false;
-        visited[cur] = true;
+        safe[cur] = 0;
         for (int i = 0; i < graph[cur].size(); i ++) {
             int next = graph[cur][i];
             if (safe[next] == -1)
-                safe[next] = dfs(next, graph, visited, safe);
-            if (!safe[next]) {
-                safe[cur] = 0;
+                safe[next] = dfs(next, graph, safe);
+            if (!safe[next])
                 return false;
-            }
         }
         safe[cur] = 1;
         return true;
@@ -40,8 +36,7 @@ public:
         vector<int> safe(n, -1);
 
         for (int i = 0; i < n; i ++) {
-            vector<bool> visited(n);
-            if (dfs(i, graph, visited, safe))
+            if (dfs(i, graph, safe))
                 ans.push_back(i);
         }
 
