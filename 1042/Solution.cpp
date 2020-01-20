@@ -11,29 +11,6 @@
 using namespace std;
 
 class Solution {
-private:
-    bool dfs(vector<int> &ans, vector<vector<int>> &graph, int cur) {
-        vector<bool> color(5, true);
-        for (auto n : graph[cur])
-            color[ans[n]] = false;
-        for (int i = 1; i < 5; i ++) {
-            if (color[i]) {
-                ans[cur] = i;
-                bool color_good = true;
-                for (auto n : graph[cur]) {
-                    if (!ans[n] && !dfs(ans, graph, n)) {
-                        color_good = false;
-                        break;
-                    }
-                }
-                if (color_good)
-                    return true;
-                ans[cur] = 0;
-            }
-        }
-        return false;
-    }
-
 public:
     vector<int> gardenNoAdj(int N, vector<vector<int>>& paths) {
         vector<vector<int>> graph(N);
@@ -45,9 +22,13 @@ public:
         }
 
         for (int i = 0; i < N; i ++) {
-            if (ans[i])
-                continue;
-            dfs(ans, graph, i);
+            vector<bool> color(5, true);
+            for (auto n : graph[i])
+                color[ans[n]] = false;
+            for (int j = 1; j < 5; j ++) {
+                if (color[j])
+                    ans[i] = j;
+            }
         }
 
         return ans;
