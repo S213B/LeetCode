@@ -3,40 +3,41 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
 class Solution {
 public:
     int minDistance(string word1, string word2) {
-        vector<int> dp(word2.size(), 0);
-        int last;
+        int n1 = word1.size(), n2 = word2.size();
+        int dp[n2+1];
+        int prev;
 
-        if (!word1.size() || !word2.size())
-            return word1.size() + word2.size();
+        dp[0] = 0;
+        for (int i = 1; i < n2+1; i ++)
+            dp[i] = i;
 
-        dp[0] = (word1[0] == word2[0] ? 0 : 1);
-        for (int i = 1; i < word2.size(); i++)
-            dp[i] = (word1[0] == word2[i] ? i : dp[i-1]+1);
-
-        for (int i = 1; i < word1.size(); i++) {
-            last = dp[0];
-            dp[0] = (word1[i] == word2[0]) ? i : last+1;
-            for (int j = 1; j < word2.size(); j++) {
-                int tmp_last = dp[j];
-                if (word1[i] == word2[j]) {
-                    dp[j] = last;
+        for (int i = 1; i < n1+1; i ++) {
+            dp[0] = i;
+            prev = i-1;
+            for (int j = 1; j < n2+1; j ++) {
+                int t = dp[j];
+                if (word1[i-1] == word2[j-1]) {
+                    dp[j] = prev;
                 } else {
-                    int insert = dp[j-1] + 1;
-                    int remove = dp[j] + 1;
-                    int replace = last + 1;
-                    dp[j] = min(insert, min(remove, replace));
+                    dp[j] += 1;
+                    dp[j] = min(dp[j], dp[j-1] + 1);
+                    dp[j] = min(dp[j], prev + 1);
                 }
-                last = tmp_last;
+                prev = t;
             }
         }
 
-        return dp[word2.size()-1];
+        return dp[n2];
     }
 };
 
