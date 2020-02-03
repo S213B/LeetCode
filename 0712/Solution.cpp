@@ -3,38 +3,41 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
 class Solution {
 public:
     int minimumDeleteSum(string s1, string s2) {
-        vector<int> dp(s2.size(), 0);
+        int n1 = s1.size(), n2 = s2.size();
+        int dp[n2+1];
+        int dp_i1j1;
 
-        dp[0] = (s1[0] == s2[0]) ? 0 : (s1[0] + s2[0]);
-        for (int i = 1, acc = s2[0]; i < s2.size(); i ++) {
-            dp[i] = (s1[0] == s2[i]) ? acc : dp[i-1] + s2[i];
-            acc += s2[i];
-        }
+        dp[0] = 0;
+        for (int j = 1; j < n2+1; j ++)
+            dp[j] = dp[j-1] + s2[j-1];
 
-        for (int i = 1, acc = s1[0]; i < s1.size(); i ++) {
-            int prev = dp[0];
-            dp[0] = (s1[i] == s2[0]) ? acc : dp[0] + s1[i];
-            acc += s1[i];
-            for (int j = 1; j < s2.size(); j ++) {
-                int _prev = dp[j];
-                if (s1[i] == s2[j]) {
-                    dp[j] = prev;
+        for (int i = 1; i < n1+1; i ++) {
+            dp_i1j1 = dp[0];
+            dp[0] += s1[i-1];
+            for (int j = 1; j < n2+1; j ++) {
+                int t = dp[j];
+                if (s1[i-1] == s2[j-1]) {
+                    dp[j] = dp_i1j1;
                 } else {
-                    dp[j] += s1[i];
-                    dp[j] = min(dp[j], prev + s1[i] + s2[j]);
-                    dp[j] = min(dp[j], dp[j-1] + s2[j]);
+                    dp[j] += s1[i-1];
+                    dp[j] = min(dp[j], dp_i1j1 + s1[i-1] + s2[j-1]);
+                    dp[j] = min(dp[j], dp[j-1] + s2[j-1]);
                 }
-                prev = _prev;
+                dp_i1j1 = t;
             }
         }
 
-        return dp[s2.size()-1];
+        return dp[n2];
     }
 };
 
