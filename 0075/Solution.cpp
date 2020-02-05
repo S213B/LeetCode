@@ -10,6 +10,7 @@
 
 using namespace std;
 
+#if 0
 class Solution {
 public:
     void sortColors(vector<int>& nums) {
@@ -27,6 +28,35 @@ public:
         }
     }
 };
+#else
+class Solution {
+private:
+    void swap(vector<int> &nums, int i, int j) {
+        int t = nums[i];
+        nums[i] = nums[j];
+        nums[j] = t;
+    }
+
+public:
+    void sortColors(vector<int>& nums) {
+        int c1 = 0, c2 = 0, c3 = nums.size() - 1;
+
+        while (c2 <= c3) {
+            int n = nums[c2];
+            if (!n) {
+                swap(nums, c1, c2);
+                c1 ++;
+                c2 ++;
+            } else if (n == 1) {
+                c2 ++;
+            } else if (n == 2) {
+                swap(nums, c2, c3);
+                c3 --;
+            }
+        }
+    }
+};
+#endif
 
 int main(int argc, char *argv[]) {
     Solution solution;
