@@ -22,8 +22,8 @@ private:
 public:
     int ladderLength(string beginWord, string endWord, vector<string>& wordList) {
         vector<bool> visited(wordList.size(), false);
-        bool done = false;
-        unordered_set<int> top, down, *self, *peer;
+        vector<int> top_visited(wordList.size()+1, false), down_visited(wordList.size()+1, false), *self, *peer;
+        vector<int> top, down, *v;
         int top_len = 1, down_len = 1, *len;
         int ans = 0;
 
@@ -41,41 +41,48 @@ public:
             wordList.push_back(beginWord);
             visited.push_back(false);
         }
-        top.insert(start_idx);
-        down.insert(end_idx);
+        top_visited[start_idx] = true;
+        down_visited[end_idx] = true;
+        top.push_back(start_idx);
+        down.push_back(end_idx);
 
-        while (top.size() && down.size() && !done) {
-            bool top2down;
+        while (top.size() && down.size()) {
             if (top.size() <= down.size()) {
-                self = &top;
-                peer = &down;
+                v = &top;
+                self = &top_visited;
+                peer = &down_visited;
                 len = &top_len;
-                top2down = true;
             } else {
-                self = &down;
-                peer = &top;
+                v = &down;
+                self = &down_visited;
+                peer = &top_visited;
                 len = &down_len;
-                top2down = false;
             }
-            for (auto it = self->begin(); it != self->end(); it ++)
-                visited[*it] = true;
 
-            unordered_set<int> visit_now;
-            for (auto it = self->begin(); it != self->end(); it ++) {
-                int curr = *it;
+            for (int i = 0; i < v->size(); i ++)
+                visited[(*v)[i]] = true;
+
+            vector<int> visit_now(wordList.size(), false);
+
+            while (v->size()) {
+                int curr = v->back();
+                v->pop_back();
                 for (int i = 0; i < visited.size(); i ++) {
                     if (!visited[i] && can_go(wordList[curr], wordList[i])) {
-                        visit_now.insert(i);
-                        if (peer->count(i)) {
-                            done = true;
-                            ans = top_len + down_len;
-                        }
+                        if ((*peer)[i])
+                            return top_len + down_len;
+                        visit_now[i] = true;
+                        (*self)[i] = true;
                     }
                 }
             }
 
+            for (int i = 0; i < visit_now.size(); i ++) {
+                if (visit_now[i])
+                    v->push_back(i);
+            }
+
             (*len) ++;
-            self->swap(visit_now);
         }
 
         return ans;
