@@ -3,44 +3,51 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
 #include <queue>
+#include <stack>
 
 using namespace std;
 
 class Solution {
-private:
-    bool can_mutate(string &a, string &b) {
-        int diff = 0;
-        for (int i = 0; i < a.size(); i ++) {
-            if (a[i] != b[i])
-                diff ++;
-        }
-        return diff == 1;
-    }
-
 public:
     int minMutation(string start, string end, vector<string>& bank) {
-        vector<bool> visited(bank.size(), false);
-        queue<string> q;
+        unordered_set<string> not_visited(bank.begin(), bank.end());
+        unordered_set<string> top, down, *self, *peer;
+        const char alpha[] = {'A', 'C', 'G', 'T'};
         int ans = 1;
 
-        q.push(start);
-        while (q.size()) {
-            int q_sz = q.size();
-            for (int i = 0; i < q_sz; i ++) {
-                string from = q.front();
-                q.pop();
-                for (int j = 0; j < bank.size(); j ++) {
-                    if (visited[j])
-                        continue;
-                    if (can_mutate(from, bank[j])) {
-                        if (bank[j] == end)
+        if (!not_visited.count(end))
+            return -1;
+
+        top.insert(start);
+        down.insert(end);
+
+        while (top.size() && down.size()) {
+            self = top.size() <= down.size() ? &top : &down;
+            peer = top.size() <= down.size() ? &down : &top;
+
+            unordered_set<string> next;
+
+            for (auto it = self->begin(); it != self->end(); it ++) {
+                string curr = *it;
+                for (int i = 0; i < curr.size(); i ++) {
+                    int c = curr[i];
+                    for (int j = 0; j < sizeof(alpha); j ++) {
+                        curr[i] = alpha[j];
+                        if (peer->count(curr))
                             return ans;
-                        q.push(bank[j]);
-                        visited[j] = true;
+                        else if (not_visited.count(curr)) {
+                            not_visited.erase(curr);
+                            next.insert(curr);
+                        }
                     }
+                    curr[i] = c;
                 }
             }
+
+            self->swap(next);
             ans ++;
         }
 
@@ -60,6 +67,7 @@ int main(int argc, char *argv[]) {
     }
 
     cout << solution.minMutation(start, end, bank) << endl;
+
 
     return 0;
 }
