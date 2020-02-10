@@ -11,30 +11,28 @@
 using namespace std;
 
 class Solution {
-private:
-    int helper(int d, int f, int target, vector<vector<int>> &memo) {
-        if (!d && !target)
-            return 1;
-        if (d <= 0 || target <= 0)
-            return 0;
-        if (memo[d][target] >= 0)
-            return memo[d][target];
-        memo[d][target] = 0;
-        for (int i = 1; i <= f; i ++) {
-            memo[d][target] += helper(d-1, f, target-i, memo);
-            memo[d][target] %= 1000000007;
-        }
-        return memo[d][target];
-    }
-
 public:
     int numRollsToTarget(int d, int f, int target) {
-        vector<vector<int>> memo(d+1, vector<int>(target+1, -1));
+        vector<int> dp(target+1), prev(target+1);
+        int mod = 1000000007;
 
-        if (d <= 0 || target <= 0)
-            return 0;
+        for (int i = 1; i <= f && i <= target; i ++)
+            prev[i] = 1;
 
-        return helper(d, f, target, memo);
+        for (int i = 1; i < d; i ++) {
+            for (int j = i+1; j <= target; j ++) {
+                for (int k = 1; k <= f; k ++) {
+                    if (j < k)
+                        continue;
+                    dp[j] += prev[j-k];
+                    dp[j] %= mod;
+                }
+            }
+            prev = dp;
+            fill(dp.begin(), dp.end(), 0);
+        }
+
+        return prev[target];
     }
 };
 
