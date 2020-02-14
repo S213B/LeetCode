@@ -13,6 +13,7 @@ using namespace std;
 class Solution {
 public:
     int mctFromLeafValues(vector<int>& arr) {
+#if 0
         int arr_sz = arr.size();
         vector<vector<int>> dp(arr_sz, vector<int>(arr_sz, INT_MAX));
         vector<vector<int>> peak(arr_sz, vector<int>(arr_sz));
@@ -38,6 +39,28 @@ public:
         }
 
         return dp[0][arr_sz-1];
+#else
+        vector<int> stk;
+        int ans = 0;
+
+        stk.push_back(INT_MAX);
+        for (auto a : arr) {
+            while (stk.back() < a) {
+                int n = stk.back();
+                stk.pop_back();
+                ans += n * min(stk.back(), a);
+            }
+            stk.push_back(a);
+        }
+
+        while (stk.size() > 2) {
+            int n = stk.back();
+            stk.pop_back();
+            ans += n * stk.back();
+        }
+
+        return ans;
+#endif
     }
 };
 
