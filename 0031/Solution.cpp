@@ -13,26 +13,22 @@ using namespace std;
 class Solution {
 public:
     void nextPermutation(vector<int>& nums) {
-        int ii, jj = -1;
+        int i = nums.size()-2;
 
-        for (int i = nums.size()-1; i >= 0; i --) {
-            for (int j = i-1; j >= 0; j --) {
-                if (nums[j] >= nums[i])
-                    continue;
-                if (j > jj || (j == jj && nums[i] < nums[ii])) {
-                    ii = i;
-                    jj = j;
-                }
-            }
+        while (i >= 0) {
+            if (nums[i] < nums[i+1])
+                break;
+            i --;
         }
 
-        if (jj >= 0) {
-            int t = nums[ii];
-            nums[ii] = nums[jj];
-            nums[jj] = t;
-            sort(nums.begin()+jj+1, nums.end());
-        } else {
+        if (i < 0) {
             reverse(nums.begin(), nums.end());
+        } else {
+            int j = nums.size()-1;
+            while (nums[j] <= nums[i])
+                j --;
+            swap(nums[i], nums[j]);
+            reverse(nums.begin()+i+1, nums.end());
         }
 
         return;
