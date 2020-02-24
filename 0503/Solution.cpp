@@ -14,17 +14,17 @@ class Solution {
 public:
     vector<int> nextGreaterElements(vector<int>& nums) {
         vector<int> ans(nums.size(), -1);
-        vector<int> stack;
+        stack<int> stk;
 
-        for (int loop = 0; loop < 2; loop ++) {
-            for (int i = 0; i < nums.size(); i ++) {
-                int n = nums[i];
-                while (stack.size() && nums[stack.back()] < n) {
-                    int idx = stack.back();
-                    stack.pop_back();
-                    ans[idx] = nums[i];
+        for (int i = 0; i < 2; i ++) {
+            for (int j = 0; j < nums.size(); j ++) {
+                int n = nums[j];
+                while (stk.size() && nums[stk.top()] < n) {
+                    int k = stk.top();
+                    stk.pop();
+                    ans[k] = n;
                 }
-                stack.push_back(i);
+                stk.push(j);
             }
         }
 
