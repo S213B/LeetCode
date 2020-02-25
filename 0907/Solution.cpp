@@ -15,26 +15,19 @@ public:
     int sumSubarrayMins(vector<int>& A) {
         int ans = 0;
         int mod = 1000000007;
-        stack<pair<int, int>> stk;
-        vector<pair<int, int>> vvv(A.size());
+        stack<int> stk;
 
         A.push_back(INT_MIN);
         for (int i = 0; i < A.size(); i ++) {
-            int len = 1;
-            while (stk.size() && A[stk.top().first] >= A[i]) {
-                len += stk.top().second;
-                vvv[stk.top().first].first = stk.top().second;
-                vvv[stk.top().first].second = i - stk.top().first;
+            while (stk.size() && A[stk.top()] >= A[i]) {
+                int j = stk.top();
                 stk.pop();
+                int l = j - (stk.size() ? stk.top() : -1);
+                int r = i - j;
+                ans += l * r * A[j];
+                ans %= mod;
             }
-            stk.push(make_pair(i, len));
-        }
-
-        for (int i = 0; i < vvv.size(); i ++) {
-            int l = vvv[i].first;
-            int r = vvv[i].second;
-            ans += l * r * A[i];
-            ans %= mod;
+            stk.push(i);
         }
 
         return ans;
