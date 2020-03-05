@@ -24,6 +24,7 @@ public:
 
         return true;
 #else
+#if 0
         bool is_inc = true, is_dec = true;
 
         for (int i = 1; i < A.size(); i ++) {
@@ -32,6 +33,20 @@ public:
         }
 
         return is_inc || is_dec;
+#else
+        bool is_inc = false, is_dec = false;
+
+        for (int i = 1; i < A.size(); i ++) {
+            if (A[i-1] < A[i])
+                is_inc = true;
+            if (A[i-1] > A[i])
+                is_dec = true;
+            if (is_inc && is_dec)
+                return false;
+        }
+
+        return true;
+#endif
 #endif
     }
 };
