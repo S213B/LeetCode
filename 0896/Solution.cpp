@@ -13,6 +13,7 @@ using namespace std;
 class Solution {
 public:
     bool isMonotonic(vector<int>& A) {
+#if 0
         const bool is_inc = (A.back() >= A[0]);
 
         for (int i = 1; i < A.size(); i ++) {
@@ -22,6 +23,16 @@ public:
         }
 
         return true;
+#else
+        bool is_inc = true, is_dec = true;
+
+        for (int i = 1; i < A.size(); i ++) {
+            is_inc &= A[i-1] <= A[i];
+            is_dec &= A[i-1] >= A[i];
+        }
+
+        return is_inc || is_dec;
+#endif
     }
 };
 
