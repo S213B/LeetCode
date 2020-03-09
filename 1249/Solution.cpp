@@ -13,29 +13,33 @@ using namespace std;
 class Solution {
 public:
     string minRemoveToMakeValid(string s) {
-        string _ans, ans;
-        int open = 0;
+        int cnt = 0;
 
         for (auto &c : s) {
             if (c == '(') {
-                open ++;
+                cnt ++;
             } else if (c == ')') {
-                open --;
-                if (open < 0) {
+                if (cnt == 0) {
                     c = '*';
-                    open ++;
+                } else {
+                    cnt --;
                 }
             }
         }
 
-        for (int i = s.size()-1; open && i >= 0; i --) {
+        for (int i = s.size()-1; cnt && i >= 0; i --) {
             if (s[i] == '(') {
                 s[i] = '*';
-                open --;
+                cnt --;
             }
         }
 
-        s.erase(remove(s.begin(), s.end(), '*'), s.end());
+        int len = 0;
+        for (int i = 0; i < s.size(); i ++) {
+            if (s[i] != '*')
+                s[len++] = s[i];
+        }
+        s.resize(len);
 
         return s;
     }
