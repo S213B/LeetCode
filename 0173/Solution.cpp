@@ -39,6 +39,20 @@ void preorder(TreeNode *node) {
 
 void inorder(TreeNode *node) {
     stack<TreeNode *> stk;
+#if 0
+    while (node || stk.size()) {
+        if (!node) {
+            node = stk.top();
+            stk.pop();
+            cout << node->val << " ";
+            node = node->right;
+        }
+        if (node) {
+            stk.push(node);
+            node = node->left;
+        }
+    }
+#else
     while (node || stk.size()) {
         while (node) {
             stk.push(node);
@@ -49,6 +63,7 @@ void inorder(TreeNode *node) {
         cout << node->val << " ";
         node = node->right;
     }
+#endif
     cout << endl;
 }
 
