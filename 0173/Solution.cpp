@@ -3,8 +3,10 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
 #include <queue>
-#include <cstring>
+#include <stack>
 
 using namespace std;
 
@@ -15,31 +17,85 @@ struct TreeNode {
     TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
+#define ITERATION
+
+#ifdef ITERATION
+// iterative preorder/inorder/postorder traversal
+
+void preorder(TreeNode *node) {
+    stack<TreeNode *> stk;
+    while (node || stk.size()) {
+        if (!node) {
+            node = stk.top();
+            stk.pop();
+        }
+        cout << node->val << " ";
+        if (node->right)
+            stk.push(node->right);
+        node = node->left;
+    }
+    cout << endl;
+}
+
+void inorder(TreeNode *node) {
+    stack<TreeNode *> stk;
+    while (node || stk.size()) {
+        while (node) {
+            stk.push(node);
+            node = node->left;
+        }
+        node = stk.top();
+        stk.pop();
+        cout << node->val << " ";
+        node = node->right;
+    }
+    cout << endl;
+}
+
+void postorder(TreeNode *node) {
+    stack<TreeNode *> stk;
+    stack<int> ans;
+    while (node || stk.size()) {
+        if (!node) {
+            node = stk.top();
+            stk.pop();
+        }
+        if (node->right)
+            stk.push(node->right);
+        ans.push(node->val);
+        node = node->left;
+    }
+    while (ans.size()) {
+        cout << ans.top() << " ";
+        ans.pop();
+    }
+    cout << endl;
+}
+#endif
+
 class BSTIterator {
 private:
-    queue<int> q;
-
-    void preorder(TreeNode *node) {
-        if (!node)
-            return;
-        preorder(node->left);
-        q.push(node->val);
-        preorder(node->right);
-    }
+    stack<TreeNode *> stk;
+    TreeNode *node;
 
 public:
     BSTIterator(TreeNode *root) {
-        preorder(root);
+        node = root;
     }
 
     int next(void) {
-        int n = q.front();
-        q.pop();
-        return n;
+        while (node) {
+            stk.push(node);
+            node = node->left;
+        }
+        TreeNode *n = stk.top();
+        stk.pop();
+        node = n->right;
+        return n->val;
     }
 
     bool hasNext(void) {
-        return !q.empty();
+        return node || stk.size();
     }
 };
 
@@ -70,11 +126,20 @@ int main(int argc, char *argv[]) {
         }
     }
 
+#ifdef ITERATION
+    cout << "preorder:" << endl;
+    preorder(root);
+    cout << "inorder:" << endl;
+    inorder(root);
+    cout << "postorder:" << endl;
+    postorder(root);
+#else
     BSTIterator it(root);
 
     while (it.hasNext())
         cout << it.next() << " ";
     cout << endl;
+#endif
 
     return 0;
 }
