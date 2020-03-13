@@ -23,16 +23,17 @@ private:
     }
 
     struct node {
-        unordered_map<char, struct node*> next;
+        unordered_map<char, struct node *> next;
         vector<int> words;
-        vector<int> done;
+        int done;
+        node() : done(-1) {};
     };
 
     struct node *add_node(struct node *n, char c, int i) {
-        n->words.push_back(i);
         if (!n->next[c]) {
             n->next[c] = new node();
         }
+        n->words.push_back(i);
         return n->next[c];
     }
 
@@ -47,26 +48,21 @@ public:
             for (auto c : words[i]) {
                 n = add_node(n, c, i);
             }
-            n->done.push_back(i);
+            n->done = i;
         }
 
         for (int i = 0; i < words.size(); i ++) {
             struct node *n = &root;
             for (int j = words[i].size()-1; n && j >= 0; j --) {
-                for (auto k : n->done) {
-                    if (is_palindrome(words[i], 0, j)) {
-                        ans.push_back({k, i});
-                    }
+                if (n->done >=0 && is_palindrome(words[i], 0, j)) {
+                    ans.push_back({n->done, i});
                 }
                 n = n->next[words[i][j]];
             }
             if (!n)
                 continue;
-            for (auto j : n->done) {
-                if (i != j) {
-                    ans.push_back({j, i});
-                }
-            }
+            if (n->done >= 0 && i != n->done)
+                ans.push_back({n->done, i});
             for (auto j : n->words) {
                 if (is_palindrome(words[j], words[i].size(), words[j].size()-1)) {
                     ans.push_back({j, i});
