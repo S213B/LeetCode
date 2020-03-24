@@ -13,6 +13,8 @@ using namespace std;
 class Solution {
 public:
     int search(vector<int>& nums, int target) {
+#define VERSION 2
+#if (VERSION == 1)
         int l = 0, h = nums.size()-1;
 
         while (l <= h) {
@@ -40,6 +42,34 @@ public:
         }
 
         return -1;
+#elif (VERSION == 2)
+        int l = 0, h = nums.size()-1;
+
+        while (l < h) {
+            int m = l + (h - l) / 2;
+            if (nums[m] > nums[h])
+                l = m + 1;
+            else
+                h = m;
+        }
+
+        int offset = l;
+
+        l = 0;
+        h = nums.size()-1;
+        while (l <= h) {
+            int m = l + (h - l) / 2;
+            int i = (m + offset) % nums.size();
+            if (nums[i] == target)
+                return i;
+            if (nums[i] > target)
+                h = m - 1;
+            else
+                l = m + 1;
+        }
+
+        return -1;
+#endif
     }
 };
 
