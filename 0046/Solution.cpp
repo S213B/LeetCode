@@ -3,12 +3,39 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <algorithm>
+#include <deque>
+#include <queue>
+#include <stack>
 
 using namespace std;
 
 class Solution {
+private:
+    void my_swap(vector<int> &v, int i, int j) {
+        int t = v[i];
+        v[i] = v[j];
+        v[j] = t;
+    }
+
+    void recursion(vector<vector<int>> &ans, vector<int> &nums, int cur) {
+        if (cur == nums.size()) {
+            ans.push_back(nums);
+            return;
+        }
+
+        for (int i = cur; i < nums.size(); i ++) {
+            my_swap(nums, cur, i);
+            recursion(ans, nums, cur+1);
+            my_swap(nums, cur, i);
+        }
+
+        return;
+    }
+
 public:
     vector<vector<int>> permute(vector<int>& nums) {
+#if 0
         vector<vector<int>> ans;
 
         ans.push_back(nums);
@@ -27,24 +54,29 @@ public:
         }
 
         return ans;
+#else
+        vector<vector<int>> ans;
+
+        recursion(ans, nums, 0);
+
+        return ans;
+#endif
     }
 };
 
 int main(int argc, char *argv[]) {
     Solution solution;
-    vector<int> nums;
     vector<vector<int>> ans;
+    vector<int> nums;
 
-    for (int i = 1; i < argc; i++) {
-        int num = atoi(argv[i]);
-        nums.push_back(num);
-    }
+    for (int i = 1; i < argc; i++)
+        nums.push_back(atoi(argv[i]));
 
     ans = solution.permute(nums);
 
-    for (auto &perm : ans) {
-        for (auto p : perm)
-            cout << p << " ";
+    for (auto &an: ans) {
+        for (auto a : an)
+            cout << a << " ";
         cout << endl;
     }
 
