@@ -9,9 +9,10 @@ using namespace std;
 class Solution {
 public:
     vector<vector<int>> subsets(vector<int>& nums) {
-        vector<vector<int>> ans;
         uint32_t id_max = 1 << (nums.size());
+        vector<vector<int>> ans(id_max, vector<int>());
 
+#if 0
         for (int id = 0; id < id_max; id ++) {
             vector<int> subset;
             for (int i = 0; i < nums.size(); i ++) {
@@ -20,6 +21,16 @@ public:
             }
             ans.push_back(subset);
         }
+#else
+        for (int i = 0; i < nums.size(); i ++) {
+            int step = 1 << i;
+            for (int start = step; start < id_max; start += step * 2) {
+                for (int j = start; j < start + step; j ++) {
+                    ans[j].push_back(nums[i]);
+                }
+            }
+        }
+#endif
 
         return ans;
     }
